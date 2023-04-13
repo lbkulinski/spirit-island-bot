@@ -15,6 +15,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class DiscordMessageHandler implements ApplicationRunner {
@@ -34,9 +36,15 @@ public class DiscordMessageHandler implements ApplicationRunner {
 
         String content = message.getContent();
 
-        if (!content.matches("\\[\\[.*]]")) {
+        Pattern pattern = Pattern.compile(".*(\\[\\[.*]]).*");
+
+        Matcher matcher = pattern.matcher(content);
+
+        if (!matcher.matches()) {
             return Mono.empty();
         }
+
+        content = matcher.group(1);
 
         System.out.printf("Content: %s%n", content);
 
